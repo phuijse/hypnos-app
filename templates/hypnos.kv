@@ -1,0 +1,17 @@
+#:kivy 1.0
+BoxLayout:
+	orientation: 'vertical'
+	BoxLayout:
+		orientation: 'horizontal'
+		Label:
+			text: 'Frequency:'
+			size_hint: (0.3, 1.0)
+		Slider:
+			id: freq
+			orientation: 'horizontal'
+			min: 0
+			max: 1000
+	Button:
+		id: send_button
+		text: 'Send'
+		on_release: app.send_data(freq.value)

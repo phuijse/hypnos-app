@@ -4,6 +4,10 @@ os.environ['KIVY_WINDOW'] = 'sdl2'
 #kivy.require('1.0.6')
 
 from kivy.app import App
+from kivy.config import Config
+Config.set('graphics', 'width', 400)
+Config.set('graphics', 'height', 200)
+#from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
@@ -12,22 +16,28 @@ from kivy.uix.label import Label
 from Adafruit_BluefruitLE import  get_provider
 from Adafruit_BluefruitLE.services import UART
 
-
-class HypnosApp(App):
-
-    def build(self):
-        layout = GridLayout(cols=1, rows=3)
-        layout.add_widget(Label(text='Write something:'))
-        self.text = TextInput()
-        layout.add_widget(self.text)
-        self.send_button = Button(text='Send')
-        layout.add_widget(self.send_button)
-        return layout
-
-
-if __name__ == '__main__':
-
+def btconnect_hypnos():
     ble = get_provider()
     ble.initialize()
     adapter = ble.get_default_adapter()
+    try:
+        adapter.start_scan()
+        device = UART.find_device()
+        if device is None:
+            raise RuntimeError("No device")
+    finally:
+        adapter.stop_scan()
+    device.connect()
+    return device
+
+class HypnosApp(App):
+    kv_directory = 'templates'
+    def build(self):
+         pass
+     
+    def send_data(self, cmd):
+        print(cmd)
+
+
+if __name__ == '__main__':
     HypnosApp().run()
