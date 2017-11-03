@@ -13,11 +13,17 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 import uuid
+"""
 from Adafruit_BluefruitLE import  get_provider
 from Adafruit_BluefruitLE.services import UART
+"""
+from bluetooth.ble import DiscoveryService, GATTRequester
+
+#from threading import Thread
+import pygatt
 import atexit
 
-ble = get_provider()
+#ble = get_provider()
 UART_SERVICE_UUID = uuid.UUID('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')
 
 def btconnect_hypnos():
@@ -55,7 +61,21 @@ class HypnosApp(App):
 
 
 if __name__ == '__main__':
-    ble.initialize()
-    ble.run_mainloop_with(btconnect_hypnos)
+#    ble.initialize()
+#    ble.run_mainloop_with(btconnect_hypnos)
 #    self.device = btconnect_hypnos()
-    #HypnosApp().run()
+#    HypnosApp().run()
+"""
+    adapter = pygatt.GATTToolBackend(hci_device='hci0')
+    adapter.start()
+    #adapter.scan()
+    device = adapter.connect('E2:F4:59:25:80:FE')
+    value = device.char_read("a1e8f5b1-696b-4e4c-87c6-69dfe0b0093b")
+    print(value)
+"""
+    service = DiscoveryService()
+    devices = service.discover(2)
+    print("found %d devices" %(len(devices)))
+    for addr, name in devices.items():
+        print(" %s - %s" %(addr, name))
+
